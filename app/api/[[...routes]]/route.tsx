@@ -13,9 +13,7 @@ const app = new Frog({
 })
 let chain = "";
 let address = "";
-/* const [chain, setChain] = useState("");
-const [address, setAddress] = useState("");
- */
+
 // Uncomment to use Edge Runtime
 // export const runtime = 'edge'
 
@@ -57,7 +55,7 @@ app.frame('/', (c) => {
     intents: [
       <TextInput placeholder="Enter your wallet address..." />,
       <Button value="eth">Ethereum</Button>,
-      <Button value="op">Scroll</Button>,
+      <Button value="scroll">Scroll</Button>,
       <Button value="base">Base</Button>
     ],
   })
@@ -69,7 +67,7 @@ app.frame('/submit', async (c) => {
   const client = new CovalentClient(`${process.env.COVALENT_KEY}`);
  // setAddress(`${c.inputText}`);
   const neynar_client = new NeynarAPIClient(`${process.env.NEYNAR_API_KEY}`);
-  //can do for eth pol base OP
+  //can do for eth pol base scroll
 let tokens:any = [];
 let spenders:any = [];
   let total = 0;
@@ -87,11 +85,10 @@ let spenders:any = [];
       spenders.push(spender);
       total += Number(item.value_at_risk);
     })
-  //  setChain("eth");
     let ether = await ethers.utils.formatEther(total.toString());
     total = Number(ether);
-    } else if (buttonValue === "op") {
-    chain = "op";
+    } else if (buttonValue === "scroll") {
+    chain = "scroll";
     address = `${c.inputText}`;
 
     const resp = await client.SecurityService.getApprovals("scroll-mainnet",`${c.inputText}`);
@@ -103,12 +100,11 @@ let spenders:any = [];
       spenders.push(spender);
       total += Number(item.value_at_risk);
     })
-   // setChain("op");
     let ether = await ethers.utils.formatEther(total.toString());
     total = Number(ether);
 
   }
-    else if (buttonValue === "base") {
+    else if (buttonValue == "base") {
     chain = "base";
     address = `${c.inputText}`;
 
@@ -268,33 +264,37 @@ let spenders:any = [];
   let total = 0;
   try{
   if (chain === "eth") {
-    console.log("Eth");
     const resp = await client.SecurityService.getNftApprovals("eth-mainnet",address);
    console.log("Response : ",resp.data.items);
    chain = " ";
     let items = (resp.data.items);
     if(items.length != 0){
-    items.map((item) => {
-      let ticker = item.contract_address_label;
-      tokens.push(ticker);
-      let spender = (item.spenders).length;
-      spenders.push(spender);
-    })
-  }else{
-    throw new Error("No Activity found on this chain");
-  }
-    } else if (chain === "op") {
-    console.log("OP");
+      items.map((item) => {
+        console.log("Item Balance: ",item.token_balances.length);
+        if(item.token_balances.length != 0){
+        let ticker = item.contract_address_label;
+        tokens.push(ticker);
+        let spender = (item.spenders).length;
+        spenders.push(spender);
+        }
+      })
+    }else{
+      throw new Error("No Activity found on this chain");
+    }
+    } else if (chain === "scroll") {
     const resp = await client.SecurityService.getNftApprovals("scroll-mainnet",address);
     chain = " ";
    
     let items = (resp.data.items);
     if(items.length != 0){
       items.map((item) => {
+        console.log("Item Balance: ",item.token_balances.length);
+        if(item.token_balances.length != 0){
         let ticker = item.contract_address_label;
         tokens.push(ticker);
         let spender = (item.spenders).length;
         spenders.push(spender);
+        }
       })
     }else{
       throw new Error("No Activity found on this chain");
@@ -305,12 +305,10 @@ let spenders:any = [];
    chain = " ";
 
       const resp = await client.SecurityService.getNftApprovals("base-mainnet",address);
-     console.log("Response : ",resp);
       let items = (resp.data.items);
-      console.log("Items : ",items)
       if(items.length != 0){
         items.map((item) => {
-          console.log("Item : ",item);
+          console.log("Item Balance: ",item.token_balances.length);
           if(item.token_balances.length != 0){
           let ticker = item.contract_address_label;
           tokens.push(ticker);
@@ -363,7 +361,7 @@ let spenders:any = [];
   })
 }
   try{
-  const user = await neynar_client.lookupUserByVerification(c.inputText as any);
+  const user = await neynar_client.lookupUserByVerification(address as any);
   return c.res({
     image: (
       <div
