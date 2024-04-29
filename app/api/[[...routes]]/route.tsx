@@ -88,10 +88,11 @@ let spenders:any = [];
       total += Number(item.value_at_risk);
     })
   //  setChain("eth");
-    let ether = ethers.utils.formatEther(total.toString());
+    let ether = await ethers.utils.formatEther(total.toString());
     total = Number(ether);
     } else if (buttonValue === "op") {
     chain = "op";
+    address = `${c.inputText}`;
 
     const resp = await client.SecurityService.getApprovals("scroll-mainnet",`${c.inputText}`);
     let items = (resp.data.items);
@@ -103,16 +104,18 @@ let spenders:any = [];
       total += Number(item.value_at_risk);
     })
    // setChain("op");
-    let ether = ethers.utils.formatEther(total.toString());
+    let ether = await ethers.utils.formatEther(total.toString());
     total = Number(ether);
 
   }
     else if (buttonValue === "base") {
     chain = "base";
+    address = `${c.inputText}`;
 
       const resp = await client.SecurityService.getApprovals("base-mainnet",`${c.inputText}`);
     let items = (resp.data.items);
     items.map((item) => {
+      console.log("Item : ",item);
       let ticker = item.ticker_symbol;
       tokens.push(ticker);
       let spender = (item.spenders).length;
@@ -297,18 +300,23 @@ let spenders:any = [];
       throw new Error("No Activity found on this chain");
     }
   }
-    else if (chain === "base") {
-      console.log("Base");
+    else if (chain == "base") {
+      console.log("Addr",address);
    chain = " ";
 
       const resp = await client.SecurityService.getNftApprovals("base-mainnet",address);
+     console.log("Response : ",resp);
       let items = (resp.data.items);
+      console.log("Items : ",items)
       if(items.length != 0){
         items.map((item) => {
+          console.log("Item : ",item);
+          if(item.token_balances.length != 0){
           let ticker = item.contract_address_label;
           tokens.push(ticker);
           let spender = (item.spenders).length;
           spenders.push(spender);
+          }
         })
       }else{
         throw new Error("No Activity found on this chain");
