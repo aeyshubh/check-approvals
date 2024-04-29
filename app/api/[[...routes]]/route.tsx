@@ -78,31 +78,41 @@ let spenders:any = [];
     let items = (resp.data.items);
     chain = "eth";
     address = `${c.inputText}`;
-    items.map((item) => {
-      let ticker = item.ticker_symbol;
-      tokens.push(ticker);
-      let spender = (item.spenders).length;
-      spenders.push(spender);
-      total += Number(item.value_at_risk);
-    })
+    if(items.length != 0){
+      items.map((item) => {
+        let ticker = item.ticker_symbol;
+        tokens.push(ticker);
+        let spender = (item.spenders).length;
+        spenders.push(spender);
+        total += Number(item.value_at_risk);
+      })
+      
     let ether = await ethers.utils.formatEther(total.toString());
     total = Number(ether);
+    }else{
+        throw new Error("No Activity found on this chain");
+      }
+
     } else if (buttonValue === "scroll") {
     chain = "scroll";
     address = `${c.inputText}`;
 
     const resp = await client.SecurityService.getApprovals("scroll-mainnet",`${c.inputText}`);
     let items = (resp.data.items);
-    items.map((item) => {
-      let ticker = item.ticker_symbol;
-      tokens.push(ticker);
-      let spender = (item.spenders).length;
-      spenders.push(spender);
-      total += Number(item.value_at_risk);
-    })
+    if(items.length != 0){
+      items.map((item) => {
+        let ticker = item.ticker_symbol;
+        tokens.push(ticker);
+        let spender = (item.spenders).length;
+        spenders.push(spender);
+        total += Number(item.value_at_risk);
+      })
+      
     let ether = await ethers.utils.formatEther(total.toString());
     total = Number(ether);
-
+    }else{
+        throw new Error("No Activity found on this chain");
+      }
   }
     else if (buttonValue == "base") {
     chain = "base";
@@ -110,18 +120,20 @@ let spenders:any = [];
 
       const resp = await client.SecurityService.getApprovals("base-mainnet",`${c.inputText}`);
     let items = (resp.data.items);
-    items.map((item) => {
-      console.log("Item : ",item);
-      let ticker = item.ticker_symbol;
-      tokens.push(ticker);
-      let spender = (item.spenders).length;
-      spenders.push(spender);
-      total += Number(item.value_at_risk);
-    })
- //   setChain("base");
-    let ether = ethers.utils.formatEther(total.toString());
+    if(items.length != 0){
+      items.map((item) => {
+        let ticker = item.ticker_symbol;
+        tokens.push(ticker);
+        let spender = (item.spenders).length;
+        spenders.push(spender);
+        total += Number(item.value_at_risk);
+      })
+      
+    let ether = await ethers.utils.formatEther(total.toString());
     total = Number(ether);
-
+    }else{
+        throw new Error("No Activity found on this chain");
+      }
   }
 }catch(e){
   return c.res({
@@ -154,7 +166,7 @@ let spenders:any = [];
             whiteSpace: 'pre-wrap',
           }}
         >
-          No Activity found on this chain !
+          You are Safu !
         </span>
 
         </div>
@@ -350,7 +362,7 @@ let spenders:any = [];
             whiteSpace: 'pre-wrap',
           }}
         >
-          No Activity found on this chain !
+          You are Safu !
         </span>
 
         </div>
