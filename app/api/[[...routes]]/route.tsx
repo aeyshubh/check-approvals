@@ -62,7 +62,7 @@ app.frame('/', (c) => {
 })
 
 
-app.frame('/submit', async (c) => {
+app.frame('/submit', async (c):Promise<any> => {
   const { buttonValue } = c
   const client = new CovalentClient(`${process.env.COVALENT_KEY}`);
  // setAddress(`${c.inputText}`);
@@ -266,7 +266,7 @@ let spenders:any = [];
 }
 })
 
-app.frame('/nft', async (c) => {
+app.frame('/nft', async (c):Promise<any> => {
   const { buttonValue } = c
   const client = new CovalentClient(`${process.env.COVALENT_KEY}`);
   const neynar_client = new NeynarAPIClient(`${process.env.NEYNAR_API_KEY}`);
