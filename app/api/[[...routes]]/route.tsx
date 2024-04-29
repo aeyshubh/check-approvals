@@ -48,7 +48,7 @@ app.frame('/', (c) => {
             padding: '0 120px',
             whiteSpace: 'pre-wrap',
           }}
-        > Do you remember your Token Approval's anon 👀 ? Find it here ⬇️
+        > Do you remember your Token Approvals anon 👀 ? Find it here ⬇️
         </div>
       </div>
     ),
